@@ -14,6 +14,7 @@ class Todos(BaseModel):
 
 class TodoUpdate(BaseModel):
     name: str
+    description: str
 
 
 app = FastAPI()
@@ -44,7 +45,8 @@ def update_todo(todo_id: int, updated_todo: TodoUpdate, db: Session = Depends(ge
     db_todo = db.query(Todo).filter(Todo.id == todo_id).first()
     if db_todo is None:
         raise HTTPException(status_code=404, detail="Todo not found")
-    db_todo[Todos.name] = updated_todo.name
+    db_todo.name = updated_todo.name # type: ignore
+    db_todo.description = updated_todo.description # type: ignore
     db.commit()
     return db_todo
 
